@@ -6,13 +6,11 @@
     @save="handleSave"
     @cancel="handleCancel"
   />
-  <v-snackbar v-model="showSnackbar" timeout="3000">
-    <pre>{{ snackbarMsg }}</pre>
-  </v-snackbar>
 </template>
 
-<script setup lang="ts">
-import { reactive, ref } from 'vue'
+<script lang="ts" setup>
+import { ref, reactive } from 'vue'
+import { useFormHandlers } from '@/composables/useFormHandlers'
 import FormGenerator from '@/components/FormGenerator.vue'
 import type { FieldSchema } from '@/types'
 
@@ -63,23 +61,15 @@ const formData = reactive({
   bio: '',
 })
 
-const showSnackbar = ref(false)
-const snackbarMsg = ref('')
 const pending = ref(false)
+
+const { handleSave: handleFormSave, handleCancel } = useFormHandlers(formData)
 
 const handleSave = async () => {
   pending.value = true
   await new Promise((r) => setTimeout(r, 2000)).finally(() => {
     pending.value = false
   })
-  console.log('Form saved:', formData)
-  snackbarMsg.value = `Form saved:\n${JSON.stringify(formData, null, 2)}`
-  showSnackbar.value = true
-}
-
-const handleCancel = () => {
-  console.log('Form cancelled')
-  snackbarMsg.value = 'Form cancelled'
-  showSnackbar.value = true
+  handleFormSave()
 }
 </script>

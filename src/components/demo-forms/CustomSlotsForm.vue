@@ -25,13 +25,12 @@
       </div>
     </template>
   </form-generator>
-  <v-snackbar v-model="showSnackbar" timeout="3000">
-    <pre>{{ snackbarMsg }}</pre>
-  </v-snackbar>
 </template>
 
-<script setup lang="ts">
-import { reactive, ref } from 'vue'
+<script lang="ts" setup>
+import { reactive } from 'vue'
+import { useFormHandlers } from '@/composables/useFormHandlers'
+import { useAppSnackbar } from '@/composables/useAppSnackbar'
 import FormGenerator from '@/components/FormGenerator.vue'
 import type { FieldSchema } from '@/types'
 
@@ -84,25 +83,11 @@ const initialFormData = {
 
 const formData = reactive({ ...initialFormData })
 
-const showSnackbar = ref(false)
-const snackbarMsg = ref('')
-
-const handleSave = () => {
-  console.log('Form saved:', formData)
-  snackbarMsg.value = `Form saved:\n${JSON.stringify(formData, null, 2)}`
-  showSnackbar.value = true
-}
-
-const handleCancel = () => {
-  console.log('Form cancelled')
-  snackbarMsg.value = 'Form cancelled'
-  showSnackbar.value = true
-}
+const { handleSave, handleCancel } = useFormHandlers(formData)
+const { showMessage } = useAppSnackbar()
 
 const handleReset = () => {
   Object.assign(formData, initialFormData)
-  console.log('Form reset')
-  snackbarMsg.value = 'Form reset'
-  showSnackbar.value = true
+  showMessage('Form reset')
 }
 </script>

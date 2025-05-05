@@ -1,3 +1,4 @@
+import { defineAsyncComponentWithLoader } from '@/utils'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
@@ -10,12 +11,12 @@ const router = createRouter({
     {
       path: '/forms',
       name: 'forms',
-      component: () => import('../views/FormsView.vue'),
+      component: defineAsyncComponentWithLoader(() => import('../views/FormsView.vue')),
       children: [
         {
           path: ':id',
           name: 'form-detail',
-          component: () => import('../views/FormDetailView.vue'),
+          component: defineAsyncComponentWithLoader(() => import('../views/FormDetailView.vue')),
         },
       ],
     },

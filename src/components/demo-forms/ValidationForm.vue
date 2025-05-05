@@ -6,13 +6,12 @@
     @save="handleSave"
     @cancel="handleCancel"
   />
-  <v-snackbar v-model="showSnackbar" timeout="3000">
-    <pre>{{ snackbarMsg }}</pre>
-  </v-snackbar>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { reactive, ref } from 'vue'
+import { useFormHandlers } from '@/composables/useFormHandlers'
+import { useAppSnackbar } from '@/composables/useAppSnackbar'
 import FormGenerator from '@/components/FormGenerator.vue'
 import type { FieldSchema } from '@/types'
 
@@ -87,26 +86,17 @@ const formData = reactive({
 })
 
 const formRef = ref<InstanceType<typeof FormGenerator> | null>(null)
-const showSnackbar = ref(false)
-const snackbarMsg = ref('')
+
+const { handleSave: handleFormSave, handleCancel } = useFormHandlers(formData)
+const { showMessage } = useAppSnackbar()
 
 const handleSave = async () => {
   const { valid } = await formRef.value?.validate()
-  if (!valid) {
-    console.log('Form validation failed')
-    snackbarMsg.value = 'Form validation failed'
-    showSnackbar.value = true
-    return
+
+  if (valid) {
+    handleFormSave()
+  } else {
+    showMessage('Form validation failed')
   }
-
-  console.log('Form saved:', formData)
-  snackbarMsg.value = `Form saved:\n${JSON.stringify(formData, null, 2)}`
-  showSnackbar.value = true
-}
-
-const handleCancel = () => {
-  console.log('Form cancelled')
-  snackbarMsg.value = 'Form cancelled'
-  showSnackbar.value = true
 }
 </script>

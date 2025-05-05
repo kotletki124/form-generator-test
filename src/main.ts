@@ -1,20 +1,27 @@
-import 'typeface-roboto'
 import '@mdi/font/css/materialdesignicons.css'
+import '@fontsource/roboto'
+
 import { mdi } from 'vuetify/iconsets/mdi'
 import { createApp } from 'vue'
+import { VTextField } from 'vuetify/components/VTextField'
+import { VSelect } from 'vuetify/components/VSelect'
+import { VCheckbox } from 'vuetify/components/VCheckbox'
+import { VTextarea } from 'vuetify/components/VTextarea'
 
 // Vuetify
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
-import * as components from 'vuetify/components'
-import * as directives from 'vuetify/directives'
 
 import App from './App.vue'
 import router from './router'
 
 const vuetify = createVuetify({
-  components,
-  directives,
+  components: {
+    VTextField,
+    VSelect,
+    VCheckbox,
+    VTextarea,
+  },
   icons: {
     defaultSet: 'mdi',
     sets: { mdi },

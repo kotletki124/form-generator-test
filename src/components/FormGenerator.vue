@@ -3,9 +3,9 @@
     <v-expand-transition group>
       <template v-for="field in fields" :key="field.key">
         <slot
+          :name="`field-${field.key}`"
           :value="model[field.key]"
           :update="(val: string | boolean) => (model[field.key] = val)"
-          :name="`field-${field.key}`"
           :field="field"
           :loading="loading"
         >
@@ -27,7 +27,7 @@
     >
       <div class="form__actions">
         <v-btn type="button" :disabled="loading" @click="$emit('cancel')">Cancel</v-btn>
-        <v-btn type="submit" :loading="loading" color="primary">Save</v-btn>
+        <v-btn type="submit" color="primary" :loading="loading">Save</v-btn>
       </div>
     </slot>
   </v-form>
@@ -35,23 +35,22 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
-import type { FieldSchema } from '@/types'
+import type { FieldSchema, FormData } from '@/types'
 
 interface Props {
   fields: FieldSchema[]
   loading?: boolean
 }
 
+defineProps<Props>()
 defineEmits(['cancel', 'save'])
 
-defineProps<Props>()
+const model = defineModel<FormData>({ required: true })
+const formRef = ref()
 
 defineExpose({
   validate: () => formRef.value?.validate(),
 })
-
-const model = defineModel<Record<string, string | boolean>>({ required: true })
-const formRef = ref()
 
 const getComponent = (type: string) => {
   switch (type) {

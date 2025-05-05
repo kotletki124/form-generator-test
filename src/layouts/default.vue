@@ -9,11 +9,11 @@
       <v-img gradient="to top right, rgba(19,84,122,.8), rgba(128,208,199,.8)"></v-img>
     </template>
 
-    <v-app-bar-title>Form generator app</v-app-bar-title>
+    <v-app-bar-title>Form generator demo app</v-app-bar-title>
   </v-app-bar>
 
   <v-main>
-    <v-container height="calc(100% - 88px)">
+    <v-container>
       <slot />
     </v-container>
   </v-main>

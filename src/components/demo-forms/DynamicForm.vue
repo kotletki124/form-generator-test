@@ -1,12 +1,10 @@
 <template>
   <form-generator v-model="formData" :fields="fields" @save="handleSave" @cancel="handleCancel" />
-  <v-snackbar v-model="showSnackbar" timeout="3000">
-    <pre>{{ snackbarMsg }}</pre>
-  </v-snackbar>
 </template>
 
-<script setup lang="ts">
-import { computed, reactive, ref } from 'vue'
+<script lang="ts" setup>
+import { computed, reactive } from 'vue'
+import { useFormHandlers } from '@/composables/useFormHandlers'
 import FormGenerator from '@/components/FormGenerator.vue'
 import type { FieldSchema } from '@/types'
 
@@ -47,19 +45,20 @@ const formData = reactive({
   feedback: '',
 })
 
-const showSnackbar = ref(false)
-const snackbarMsg = ref('')
+const filteredData = reactive<Partial<typeof formData>>({ ...formData })
+
+const { handleSave: handleFormSave, handleCancel } = useFormHandlers(filteredData)
 
 const handleSave = () => {
-  const filteredData = { ...formData, feedback: formData.subscribe ? formData.feedback : undefined }
-  console.log('Form saved:', formData)
-  snackbarMsg.value = `Form saved:\n${JSON.stringify(filteredData, null, 2)}`
-  showSnackbar.value = true
-}
+  Object.assign(filteredData, formData)
 
-const handleCancel = () => {
-  console.log('Form cancelled')
-  snackbarMsg.value = 'Form cancelled'
-  showSnackbar.value = true
+  const currentKeys = new Set(fields.value.map((field) => field.key))
+  for (const key in filteredData) {
+    if (!currentKeys.has(key)) {
+      delete filteredData[key as keyof typeof filteredData]
+    }
+  }
+
+  handleFormSave()
 }
 </script>
