@@ -55,12 +55,11 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from 'vue'
+import { ref, watch, onBeforeMount, onBeforeUnmount } from 'vue'
 import { computedAsync } from '@vueuse/core'
 import { useDisplay } from 'vuetify'
-
+import { useCodeHighlighter } from '@/composables/useCodeHighlighter'
 import CodeView from '@/components/CodeView.vue'
-
 import type { DemoForm } from '@/types'
 
 interface Props {
@@ -73,6 +72,7 @@ const tab = ref(3)
 const codeLoading = ref(true)
 
 const { lgAndUp } = useDisplay()
+const { initialize, dispose } = useCodeHighlighter()
 
 const sourceCode = computedAsync(
   async () => {
@@ -84,6 +84,10 @@ const sourceCode = computedAsync(
   undefined,
   { evaluating: codeLoading },
 )
+
+onBeforeMount(initialize)
+
+onBeforeUnmount(dispose)
 
 watch(lgAndUp, (newValue) => {
   tab.value = newValue ? 3 : 2

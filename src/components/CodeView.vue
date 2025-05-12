@@ -8,9 +8,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue'
-import { computedAsync } from '@vueuse/core'
-import { useTheme } from 'vuetify'
+import { computed } from 'vue'
+import { useCodeHighlighter } from '@/composables/useCodeHighlighter'
 
 interface Props {
   code?: string
@@ -21,47 +20,9 @@ const props = withDefaults(defineProps<Props>(), {
   code: '',
 })
 
-const theme = useTheme()
-const initializing = ref(true)
+const { codeToHtml, initializing } = useCodeHighlighter()
 
-const shikiTheme = computed(() =>
-  theme.global.name.value === 'dark' ? 'vitesse-dark' : 'vitesse-light',
-)
-
-const highlighter = computedAsync(
-  async () => {
-    const [
-      { createHighlighterCore },
-      { default: vueLang },
-      { default: vitesseLight },
-      { default: vitesseDark },
-      { createJavaScriptRegexEngine },
-    ] = await Promise.all([
-      import('shiki/core'),
-      import('@shikijs/langs/vue'),
-      import('@shikijs/themes/vitesse-light'),
-      import('@shikijs/themes/vitesse-dark'),
-      import('shiki/engine/javascript'),
-    ])
-
-    const engine = createJavaScriptRegexEngine()
-
-    return createHighlighterCore({
-      langs: [vueLang],
-      themes: [vitesseLight, vitesseDark],
-      engine,
-    })
-  },
-  null,
-  initializing,
-)
-
-const codeHtmlString = computed(() =>
-  highlighter.value?.codeToHtml(props.code, {
-    lang: 'vue',
-    theme: shikiTheme.value,
-  }),
-)
+const codeHtmlString = computed(() => codeToHtml(props.code) || '')
 
 const loading = computed(() => initializing.value || props.loading)
 </script>

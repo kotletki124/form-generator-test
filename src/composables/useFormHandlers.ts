@@ -5,8 +5,10 @@ export const useFormHandlers = (formData: FormData) => {
   const { showMessage } = useAppSnackbar()
 
   const handleSave = async () => {
-    showMessage(`Form saved:\n${JSON.stringify(formData, null, 2)}`)
-    console.log('Form saved:', formData)
+    const msg = `Form saved:\n${JSON.stringify(formData, null, 2)}`
+
+    showMessage(msg)
+    console.log(msg)
   }
 
   const handleCancel = () => {
